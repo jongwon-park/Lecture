@@ -1,0 +1,47 @@
+## 네이버 기사를 이용하여 word cloud
+
+[fontlink](./res/NaverNanumSquareNeo.zip)
+
+
+```python
+from wordcloud import WordCloud
+from pynori.korean_analyzer import KoreanAnalyzer
+from collections import Counter
+
+# open으로 txt파일을 열고 read()를 이용하여 읽는다.
+text = open('result.csv').read() 
+
+# https://github.com/gritmind/python-nori
+nori = KoreanAnalyzer(
+    decompound_mode='NONE', # DISCARD or MIXED or NONE
+    infl_decompound_mode='NONE', # DISCARD or MIXED or NONE
+    discard_punctuation=True,
+    output_unknown_unigrams=False,
+    pos_filter=False, stop_tags=['JKS', 'JKB', 'VV', 'EF'],
+    synonym_filter=False, mode_synonym='NORM', # NORM or EXTENSION
+  ) 
+
+noun_adj_list = []
+
+analysised = nori.do_analysis(text)
+# tag가 명사이거나 형용사인 단어들만 noun_adj_list에 넣어준다.
+for idx, posTag in enumerate(analysised['posTagAtt']):
+  if posTag == 'NNG':
+    noun_adj_list.append(analysised['termAtt'][idx])
+
+# 가장 많이 나온 단어부터 40개를 저장한다.
+counts = Counter(noun_adj_list)
+tags = counts.most_common(40) 
+
+
+# WordCloud를 생성한다.
+# 한글을 분석하기위해 font를 한글로 지정해주어야 된다. macOS는 .otf , window는 .ttf 파일의 위치를
+# 지정해준다. (ex. '/Font/GodoM.otf')
+wc = WordCloud(font_path=['./NanumSquareNeoOTF-aLt.otf'],background_color="white", max_font_size=60)
+cloud = wc.generate_from_frequencies(dict(tags))
+
+
+# 생성된 WordCloud를 test.jpg로 보낸다.
+cloud.to_file('test.jpg')
+
+```
