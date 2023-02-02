@@ -4,8 +4,8 @@
 
 ```bash
 $ pip install requests beautifulsoup4 urllib 
-$ pip install konlpy wordcloud
+$ pip install pecab wordcloud
 ```
 
-- konlpy : 한글 형태소 분석기
+- pecab : 한글 형태소 분석기
 - wordcloud : 워드 크라우드 생성 모듈
